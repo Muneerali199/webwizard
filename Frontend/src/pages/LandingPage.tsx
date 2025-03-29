@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Wand2 } from 'lucide-react';
-import axios from 'axios';
 
 export default function LandingPage() {
   const [prompt, setPrompt] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit =  (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
       navigate('/builder', { state: { prompt } });

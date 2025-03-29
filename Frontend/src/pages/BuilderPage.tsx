@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { FolderTree, Code2, ChevronRight, ChevronDown, Code, Eye } from 'lucide-react';
 import Editor from "@monaco-editor/react";
-import axios from 'axios';
 
 interface FileItem {
   name: string;
@@ -76,21 +75,6 @@ export default function BuilderPage() {
         return 'plaintext';
     }
   };
-    async function init(){
-      const response=await axios.post(`${BACKEND_URL}/template`, {
-        messages:prompt.trim()
-      })
-      const {prompts,uiPrompts}=response.data
-      const stepResponse = await axios.post(`${BACKEND_URL}/chat`,{
-        messages: [...prompts, {prompt}.map(content=> ({
-          role:"user",
-          content
-        }))
-      })
-    }
-    useEffect(() => {
-      init();
-    }, [])
 
   const renderFileTree = (items: FileItem[], path = '') => {
     return items.map((item, index) => {
