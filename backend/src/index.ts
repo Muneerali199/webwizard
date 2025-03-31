@@ -18,10 +18,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Enhanced logging in /template endpoint
 app.post("/template", async (req, res) => {
     const prompt = req.body.prompt;
+    console.log("Received prompt:", prompt);  // Log the received prompt
 
     try {
+        console.log("Sending request to Generative AI...");
+
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(`
             Return either 'node' or 'react' based on what you think this project should be. 
@@ -29,13 +33,13 @@ app.post("/template", async (req, res) => {
             User prompt: ${prompt}
         `);
 
-        // Extract the actual response text
         const responseText = result?.response?.text()?.trim().toLowerCase() || "";
+        console.log("AI Response Text:", responseText);  // Log the AI response
 
         if (responseText === "react") {
             res.json({
                 prompts: [
-                    BASE_PROMPT, 
+                    BASE_PROMPT,
                     `Here is an artifact that contains all files of the project visible to you.\nConsider the contents of ALL files in the project.\n\n${reactBasePrompt}\n\nHere is a list of files that exist on the file system but are not being shown to you:\n\n  - .gitignore\n  - package-lock.json\n`
                 ],
                 uiPrompts: [reactBasePrompt]
@@ -56,28 +60,39 @@ app.post("/template", async (req, res) => {
         res.status(403).json({ message: "Invalid response from AI model." });
 
     } catch (error) {
-        console.error("Error in /template route:", error);
-        res.status(500).json({ message: "Internal server error." });
+        console.error("Error in /template route:", error);  // Log any errors
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
 
+// Enhanced logging in /chat endpoint
 app.post("/chat", async (req, res) => {
     const messages = req.body.messages;
+    console.log("Received messages:", messages);  // Log the received messages
 
     try {
+        console.log("Sending request to Generative AI...");
+
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
         const result = await model.generateContent(getSystemPrompt());
 
-        res.json({
-            response: result?.response?.text() || "No response received"
-        });
+        // Log the full result from the model
+        console.log("AI Model Response:", result);
+
+        // Extract and log the response text
+        const responseText = result?.response?.text()?.trim() || "No response received";
+        console.log("AI Response Text:", responseText);  // Log the actual response text
+
+        // Send the response back to the client
+        res.json({ response: responseText });
 
     } catch (error) {
-        console.error("Error in /chat route:", error);
-        res.status(500).json({ message: "Internal server error." });
+        console.error("Error in /chat route:", error);  // Log any errors
+        res.status(500).json({ message: "Internal server error", error: error.message });
     }
 });
 
+// Start the server
 app.listen(3000, () => {
     console.log("Server running on port 3000");
 });
