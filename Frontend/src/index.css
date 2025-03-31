@@ -1,3 +1,26 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .rotate-x-1 {
+    transform: rotateX(1deg);
+  }
+  .rotate-x-2 {
+    transform: rotateX(2deg);
+  }
+  .rotate-x-3 {
+    transform: rotateX(3deg);
+  }
+}
+
+@layer base {
+  body {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
